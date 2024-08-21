@@ -91,7 +91,7 @@ def get_tar_package_url_pypi(name: str, version: str) -> str:
         raise Exception(err)
 
 
-def get_package_name(filename: str) -> str:
+def get_raw_package_name(filename: str) -> str:
     if filename.endswith(('bz2', 'gz', 'xz', 'zip')):
         segments = filename.split('-')
         if len(segments) == 2:
@@ -113,10 +113,14 @@ def get_package_name(filename: str) -> str:
         )
 
 
+def get_package_name(filename: str) -> str:
+    return get_raw_package_name(filename).lower()
+
+
 def get_file_version(filename: str) -> str:
     name = get_package_name(filename)
-    segments = filename.split(name + '-')
-    version = segments[1].split('-')[0]
+    suffix = filename[len(name)+1:]
+    version = suffix.split('-')[0]
     for ext in ['tar.gz', 'whl', 'tar.xz', 'tar.gz', 'tar.bz2', 'zip']:
         version = version.replace('.' + ext, '')
     return version
